@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+from html import parser
 import logging
 import sys
 from pathlib import Path
@@ -29,7 +30,36 @@ def setup_logging(verbose=False):
 
 def parse_arguments():
     """Parse command-line arguments."""
-    pass  # TODO: implement
+    parser = argparse.ArgumentParser(description="Data Processing Pipeline")
+
+    parser.add_argument(
+        "--input", "-i",
+        required=True,
+        help="Path to the input file"
+    )
+
+    parser.add_argument(
+        "--output", "-o",
+        required=True,
+        help="Path to the output file"
+    )
+
+    parser.add_argument(
+        "--format", "-f",
+        choices=["csv", "json"],
+        default="csv",
+        help="Output format (default: csv)"
+    )
+
+    parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Enable verbose logging"
+    )
+
+    return parser.parse_args()
+
+    pass # TODO: implement
 
 
 def validate_input(filepath):
