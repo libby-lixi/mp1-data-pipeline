@@ -9,7 +9,6 @@ Usage:
 """
 
 import argparse
-from html import parser
 import logging
 import sys
 from pathlib import Path
@@ -64,7 +63,7 @@ def parse_arguments():
 
 def validate_input(filepath):
     """Check whether the input path exists and is a file."""
-    if Path(filepath).isfile():
+    if Path(filepath).is_file():
         logger.info(f"Input file '{filepath} is vaild")
         return True
     else:
@@ -73,7 +72,15 @@ def validate_input(filepath):
 
 def main():
     """Main pipeline function."""
-    pass  # TODO: implement
+    args = parse_arguments()
+    setup_logging(args.verbose)
+    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}, verbose={args.verbose}")
+
+    if not validate_input(args.input):
+        sys.exit(1)
+
+    # TODO: implement the main processing logic
+    pass
 
 
 if __name__ == "__main__":
