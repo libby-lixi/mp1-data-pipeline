@@ -7,6 +7,10 @@ __pycache__/
 .vscode/
 .idea/
 
+# Virtual Environment
+venv/
+
+
 # OS
 .DS_Store
 Thumbs.db
