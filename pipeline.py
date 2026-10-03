@@ -78,7 +78,7 @@ def main():
 
     if not validate_input(args.input):
         sys.exit(1)
-
+        
     # TODO: implement the main processing logic
     pass
 
