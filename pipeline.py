@@ -12,6 +12,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from data_loaders import load_data
 
 
 logger = logging.getLogger(__name__)
@@ -22,9 +23,9 @@ def setup_logging(verbose=False):
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        format="%(asctime)s %(levelname)-8s %(name)s — %(message)s",
+        datefmt="%H:%M:%S"
     )
-    pass  # TODO: implement
 
 
 def parse_arguments():
@@ -58,30 +59,32 @@ def parse_arguments():
 
     return parser.parse_args()
 
-    pass # TODO: implement
 
 
 def validate_input(filepath):
     """Check whether the input path exists and is a file."""
     if Path(filepath).is_file():
-        logger.info(f"Input file '{filepath} is vaild")
+        logger.info(f"Input file validated: {filepath}")
         return True
     else:
-        logger.error(f"Input file '{filepath}' does not exist or is not a file.")
+        logger.error(f"Input file not validated: {filepath}")
         return False
+
 
 def main():
     """Main pipeline function."""
     args = parse_arguments()
     setup_logging(args.verbose)
-    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}, verbose={args.verbose}")
+    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}")
 
     if not validate_input(args.input):
         sys.exit(1)
-        
-    # TODO: implement the main processing logic
-    pass
 
+    try:
+        data = load_data(args.input)
+
+    except ValueError:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

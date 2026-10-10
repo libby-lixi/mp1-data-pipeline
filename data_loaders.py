@@ -16,7 +16,7 @@ def load_csv(filepath):
     filepath is a Path object.
     """
     df = pd.read_csv(filepath)
-    logger.info(f"Loaded CSV file from {filepath} (len={len(df)} rows)")
+    logger.info(f"Loaded CSV file: {filepath} ({len(df)} rows)")
     return df
 
 
@@ -26,7 +26,7 @@ def load_json(filepath):
     """
     with open(filepath, 'r') as f:
         data = json.load(f)
-    logger.info(f"Loaded JSON file; {filepath}")
+    logger.info(f"Loaded JSON file: {filepath}")
     return data
     
     
@@ -36,7 +36,7 @@ def load_yaml(filepath):
     """
     with open(filepath, 'r') as f:
         data = yaml.safe_load(f)
-    logger.info(f"Loaded YAML file; {filepath}")
+    logger.info(f"Loaded YAML file: {filepath}")
     return data
 
 def load_data(filepath):
@@ -44,14 +44,15 @@ def load_data(filepath):
     filepath is a string, such as 'fixtures/sample.csv'
     """
     path = Path(filepath)
-    ext = Path(filepath).suffix
+    ext = path.suffix.lower()
 
     if ext == '.csv':
         return load_csv(path)
     elif ext == '.json':
         return load_json(path)
     elif ext == '.yaml':
-        return load_yaml(path)
+        return load_yaml(filepath)
     else:
         logger.error(f"Unsupported file extension: {ext}")
-        return None
+        raise ValueError(f"Unsupported file extension: {ext}")
+        
