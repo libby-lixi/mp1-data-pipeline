@@ -67,7 +67,7 @@ def validate_input(filepath):
         logger.info(f"Input file validated: {filepath}")
         return True
     else:
-        logger.error(f"Input file not validated: {filepath}")
+        logger.error(f"Input file not found: {filepath}")
         return False
 
 
@@ -82,7 +82,6 @@ def main():
 
     try:
         data = load_data(args.input)
-
     except ValueError:
         sys.exit(1)
 

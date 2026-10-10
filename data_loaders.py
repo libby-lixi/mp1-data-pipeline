@@ -51,8 +51,8 @@ def load_data(filepath):
     elif ext == '.json':
         return load_json(path)
     elif ext == '.yaml':
-        return load_yaml(filepath)
+        return load_yaml(path)
     else:
-        logger.error(f"Unsupported file extension: {ext}")
-        raise ValueError(f"Unsupported file extension: {ext}")
+        logger.error(f"Unsupported file format: {ext}")
+        raise ValueError(f"Unsupported file format: {ext}")
         
