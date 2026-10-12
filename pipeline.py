@@ -12,9 +12,15 @@ import argparse
 import logging
 import sys
 
-from src.data_loaders import load_data
-from src.data_processor import process_data, create_cleaning_report
-from src.utils import setup_logging, validate_input
+from src import (
+    create_cleaning_report,
+    load_data,
+    save_data,
+    process_data,
+    setup_logging,
+    validate_dataframe,
+    validate_input
+)
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +75,16 @@ def main():
         logger.error(f"Error loading data: {e}")
         sys.exit(1)
 
-    df_original = df.copy()
+    required_columns = config["validation"]["required_columns"]
+    numeric_columns = config["validation"]["numeric_columns"]
+    try:
+        rows_before = len(df)
+        df = validate_dataframe(df, required_columns, numeric_columns)
+        logger.info(f"Validation complete: {rows_before} rows -> {len(df)} rows.")
+    except ValueError:
+        sys.exit(1)
+
+    df_original = df.copy()  # Keep a copy for reporting
 
     try:
         df = process_data(df, config)
@@ -77,11 +92,15 @@ def main():
         sys.exit(1)
 
     report = create_cleaning_report(df_original, df)
-    print(report)
     logger.info(f"Processing complete: {report['rows_before']} rows -> {report['rows_after']} rows.")
 
-    df.to_csv(args.output, index=False)
+
+    save_data(df, args.output)
     logger.info(f"Saved cleaned data to {args.output}")
 
+    print("\nCleaning report:")
+    print(report)
+
 if __name__ == "__main__":
+
     main()

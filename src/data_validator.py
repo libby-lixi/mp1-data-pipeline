@@ -32,5 +32,6 @@ def validate_dataframe(df, required_columns, numeric_columns):
 
         df[col] = pd.to_numeric(df[col])
 
-    logger.debug(f"Validation: {before} -> {len(df)} row (removed{before - len(df)}) ")
+    after = len(df)
+    logger.debug(f"Validation: {before} -> {after} rows")
     return df
