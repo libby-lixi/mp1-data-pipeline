@@ -13,6 +13,7 @@ import logging
 import sys
 from pathlib import Path
 from data_loaders import load_data
+from data_processor import process_data, create_cleaning_report
 
 
 logger = logging.getLogger(__name__)
@@ -45,16 +46,15 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--format", "-f",
-        choices=["csv", "json"],
-        default="csv",
-        help="Output format (default: csv)"
-    )
-
-    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Enable verbose logging"
+    )
+
+    parser.add_argument(
+        "--config",
+        required=True,
+        help="Path to the Yaml configuration file"
     )
 
     return parser.parse_args()
@@ -75,15 +75,33 @@ def main():
     """Main pipeline function."""
     args = parse_arguments()
     setup_logging(args.verbose)
-    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}, format={args.format}")
+    logger.debug(f"Arguments parsed: input={args.input}, output={args.output}")
 
     if not validate_input(args.input):
         sys.exit(1)
+    if not validate_input(args.config):
+        sys.exit(1)
 
     try:
-        data = load_data(args.input)
+        df = load_data(args.input)
+        config = load_data(args.config)
+    except ValueError as e:
+        logger.error(f"Error loading data: {e}")
+        sys.exit(1)
+
+    df_original = df.copy()
+
+    try:
+        df = process_data(df, config)
     except ValueError:
         sys.exit(1)
+
+    report = create_cleaning_report(df_original, df)
+    print(report)
+    logger.info(f"Processing complete: {report['rows_before']} rows -> {report['rows_after']} rows.")
+
+    df.to_csv(args.output, index=False)
+    logger.info(f"Saved cleaned data to {args.output}")
 
 if __name__ == "__main__":
     main()
